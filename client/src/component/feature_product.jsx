@@ -1,44 +1,51 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { getAllProduct } from "../services/product";
 import Loader from "./loader";
 import Product from "./product";
-import { motion } from 'framer-motion'
+import { motion } from "framer-motion";
 import { useContext } from "react";
 import { searcContext } from "../context/searchcontext";
-const FeatureProduct = () => {
-    const { data, isLoading, isError, isPending } = useQuery({
-        queryKey: ["product"],
-        queryFn: getAllProduct,
-        staleTime: 60 * 1000 * 5,
-    })
-       const {setSearchMode}=useContext(searcContext)
-    
-    if (isLoading) {
-        return (
-            <Loader />
-        )
-    }
-    return (
-        <div className="grid grid-cols-8 gap-4 mx-30">
-            {data.slice(20, 28).map((item) => (
-                <motion.div
-                    key={item._id}
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4 }}
-                    className="min-w-[260px] w-[220px] rounded-xl shadow-md p-4 col-span-2 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
-                >
-                    <Product product={item} />
-                </motion.div>
-            ))}
-            <p className="cursor-pointer" onClick={()=>setSearchMode(true)}>View All</p>
-        </div>
 
-    );
-}
+const FeatureProduct = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["product"],
+    queryFn: getAllProduct,
+    staleTime: 60 * 1000 * 5,
+  });
+
+  const { setSearchMode } = useContext(searcContext);
+
+  const products = data || [];
+
+  if (isLoading) return <Loader />;
+
+  return (
+    <div className="p-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 md:gap-4 gap-2">
+        {products.slice(20, 28).map((item) => (
+          <motion.div
+            key={item._id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
+            className="rounded-xl shadow-md p-3 hover:shadow-xl hover:-translate-y-1 transition"
+          >
+            <Product product={item} />
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="mt-4">
+        <button
+          onClick={() => setSearchMode(true)}
+          className="text-sm font-medium text-blue-600 hover:underline"
+        >
+          View All
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default FeatureProduct;
-
-

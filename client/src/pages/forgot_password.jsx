@@ -68,11 +68,18 @@ const ForgotPassword = () => {
         if (!newPassword) {
             toast.error("create your password")
         }
-        const res = await getForgotPassword({ "email": email, "newPassword": newPassword })
-        if (res.message === 'Password updated successfully') {
-            navigate("/login")
-            setCheck(0)
+        try {
+            const res = await getForgotPassword({ "email": email, "newPassword": newPassword })
+            console.log(res)
+            if (res.data.message === 'Password updated successfully') {
+                toast.success(res.data.message)
+                navigate("/login")
+                setCheck(0)
+            }
+        } catch (error) {
+
         }
+
     }
 
 

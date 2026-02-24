@@ -5,11 +5,10 @@ import { CiMenuFries } from "react-icons/ci";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../features/auth_slice';
-import { setCart } from '../features/cart';
-import logo from '../assets/logo.png';
 import { useContext, useState } from 'react';
 import { motion } from 'framer-motion'
 import { searcContext } from '../context/searchcontext';
+import {resetCart} from '../features/cart'
 
 function Header() {
     const dispatch = useDispatch();
@@ -27,6 +26,7 @@ function Header() {
 
     const handleLogout = () => {
         dispatch(logout());
+        dispatch(resetCart())
         navigate('/');
     };
 

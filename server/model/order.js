@@ -7,7 +7,6 @@ const orderSchema= mongoose.Schema({
     },
     sellerId: {
         type: String,
-        required: true,
     },
     orderId:{
         type: String,

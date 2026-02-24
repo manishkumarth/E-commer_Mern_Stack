@@ -26,7 +26,7 @@ const checkoutOrder = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Server error check" });
     }
 };
 
@@ -58,10 +58,15 @@ const getAllOrdersBySeller = async (req, res) => {
     }
 };
 const getAllOrdersByUser=async (req,res)=>{
+    console.log(req)
     try{
-
+        const userId=req.user.id;
+        const data=await Order.find({userId})
+        console.log("data logs",data)
+        res.status(200).json({message:"order details success",data})
     }catch(error){
-
+        console.log("error logs",error)
+        res.status(200).json({message:"server error"})
     }
 }
 const changeOrderStatus = async (req, res) => {

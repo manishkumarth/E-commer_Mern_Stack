@@ -26,7 +26,7 @@ router.get("/get-all-users",authMiddleware,getAllUsers);   //admin only
 router.post("/add-to-cart",authMiddleware,addToCart);
 router.post("/remove-from-cart",authMiddleware,removeFromCart);
 router.get("/get-user-cart",authMiddleware,getUserCart);
-router.get("/get-all-orderby-user",getAllOrdersByUser);
+router.get("/get-all-orderby-user",authMiddleware,getAllOrdersByUser);
 router.post("/checkout-order",authMiddleware,checkoutOrder);
 router.get("/track-order",authMiddleware,getTrackOrder);
 

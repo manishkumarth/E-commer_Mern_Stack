@@ -26,10 +26,6 @@ export const getForgotPassword = async (otp) => {
     const res = await api.post("/forget-password", otp);
     return res;
 }
-// router.post("/send-otp", sendOtp);
-// router.post("/verify-otp", verifyOtp);
-// router.post("/forget-password", forgetPassword);
-
 
 export const getUserCart = async () => {
     const res = await api.get('/get-user-cart')
@@ -37,7 +33,14 @@ export const getUserCart = async () => {
 }
 export const saveToCart = async (data) => {
     const res = await api.post('/add-to-cart', data)
+    return res
 }
 export const removeFromCart = async (productId) => {
     const res = await api.post('/remove-from-cart', productId)
+    return res
+}
+export const getOrderDetails= async ()=>{
+    const res= await api.get("/get-all-orderby-user")
+    console.log(res.data)
+    return res.data
 }

@@ -12,19 +12,23 @@ const Login = () => {
   const navigate = useNavigate()
   const handleLogin = async (e) => {
     e.preventDefault()
-    toast('');
     if (!input.email) {
       toast.error("Please Enter Email")
     } else if (!input.password) {
       toast.error("Please Enterr Password")
     } else {
-      toast.success("Login success")
-      console.log(input)
-      const res = await getLogin(input)
-      console.log("loged in", res)
-      dispatch(loginSuccess(res.data.token))
-      console.log(isAuth)
-      navigate('/cart')
+      try {
+        const res = await getLogin(input)
+        toast.success("Login success")
+        dispatch(loginSuccess(res.data.token))
+        console.log(isAuth)
+        navigate('/cart')
+      } catch (error) {
+        console.log(error.response.data.message)
+        toast.error(error.response.data.message)
+
+      }
+
 
     }
 
@@ -67,7 +71,7 @@ const Login = () => {
                 <label className="block text-sm font-medium text-gray-700">
                   Password
                 </label>
-                <span onClick={()=>navigate('/forgot-password')} className="text-sm font-medium text-pink-400 hover:text-pink-500 cursor-pointer">
+                <span onClick={() => navigate('/forgot-password')} className="text-sm font-medium text-pink-400 hover:text-pink-500 cursor-pointer">
                   Forgot password?
                 </span>
               </div>

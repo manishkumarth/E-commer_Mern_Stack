@@ -32,13 +32,13 @@ function Product({ product }) {
   return (
 
 
-    <div className="bg-white rounded-lg overflow-hidden flex flex-col justify-between h-[450px] w-auto p-4">
+    <div className="bg-white rounded-lg overflow-hidden flex flex-col justify-between h-[450px] md:w-auto w-[150px] md:p-4 p-0">
       <img
         src={product.image}
         alt={product.title}
         className="w-full h-40 object-cover"
       />
-      <div className="p-4 flex flex-col justify-between flex-1">
+      <div className="p-2 flex flex-col justify-between flex-1">
         <div>
           <h2 className="text-lg font-semibold mb-2 truncate">{product.title}</h2>
           <p className="text-gray-600 mb-2 line-clamp-3">{product.description}</p>

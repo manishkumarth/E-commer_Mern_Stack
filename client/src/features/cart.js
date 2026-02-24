@@ -71,7 +71,8 @@ export const {
     addItemOptimistic,
     increaseQty,
     decreaseQty,
-    setCart
+    setCart,
+    resetCart
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

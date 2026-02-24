@@ -76,7 +76,7 @@ const verifyAndSaveOrder = async (req, res) => {
       }
 
       orderItems.push({
-        sellerId:"123",
+        sellerId:sellerId,
         productId: product._id,
         title: product.title,
         price: product.price,
@@ -88,6 +88,7 @@ const verifyAndSaveOrder = async (req, res) => {
     // 3️⃣ Save order
     const newOrder = await Order.create({
       userId,
+      sellerId,
       orderId: razorpay_order_id,
       paymentMethod,
       items: orderItems,
@@ -102,7 +103,8 @@ const verifyAndSaveOrder = async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    // console.error(err);
+    console.log(err)
     res.status(500).json({ message: "Server error" });
   }
 };
