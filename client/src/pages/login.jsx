@@ -9,31 +9,40 @@ const Login = () => {
   const [input, setInput] = useState({ email: "", password: "" })
   const dispatch = useDispatch()
   const isAuth = useSelector((state) => state.user.isAuth)
+  const role = useSelector((state) => state.user.role)
   const navigate = useNavigate()
+
   const handleLogin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+
     if (!input.email) {
-      toast.error("Please Enter Email")
-    } else if (!input.password) {
-      toast.error("Please Enterr Password")
-    } else {
-      try {
-        const res = await getLogin(input)
-        toast.success("Login success")
-        dispatch(loginSuccess(res.data.token))
-        console.log(isAuth)
-        navigate('/cart')
-      } catch (error) {
-        console.log(error.response.data.message)
-        toast.error(error.response.data.message)
-
-      }
-
-
+      toast.error("Please Enter Email");
+      return;
     }
 
+    if (!input.password) {
+      toast.error("Please Enter Password");
+      return;
+    }
 
-  }
+    try {
+      const res = await getLogin(input);
+
+      dispatch(loginSuccess(res.data));
+
+      toast.success("Login success");
+
+      if (res.data.role === "user") {
+        navigate("/cart");
+      } else {
+        navigate("/dashboard"); 
+      }
+
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Login failed");
+    }
+  };
+
   useEffect(() => {
     console.log("login component re-render")
   })

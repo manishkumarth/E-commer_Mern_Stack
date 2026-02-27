@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import toast from "react-hot-toast"
 function Product({ product }) {
   const isAuth = useSelector((state) => state.user.isAuth)
+  const role = useSelector((state) => state.user.role)
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleProductCart = async () => {
@@ -48,6 +50,7 @@ function Product({ product }) {
         </div>
         <button
           onClick={handleProductCart}
+          disabled={role == "user" ? false : true}
           className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
           Add to Cart

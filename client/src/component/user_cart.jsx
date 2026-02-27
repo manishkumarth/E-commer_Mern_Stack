@@ -69,6 +69,7 @@ const UserCart = ({ cart }) => {
     }
   };
 
+  console.log("cart logs")
 
 
   if (!cart || !cart.items || cart.items.length === 0) {

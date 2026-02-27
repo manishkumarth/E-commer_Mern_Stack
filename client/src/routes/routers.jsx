@@ -8,6 +8,7 @@ import FourZeroFour from '../pages/404'
 import Orders from '../pages/orders'
 import ProtectedRoute from './proteced_route'
 import ForgotPassword from '../pages/forgot_password'
+import AdminDashboard from '../pages/admin_dashboard'
 export const PageRouter = () => {
   return (
     <>
@@ -17,6 +18,7 @@ export const PageRouter = () => {
         <Route element={<ProtectedRoute />}>
           <Route path='/cart' element={<Cart />} />
           <Route path='/order' element={<Orders />} />
+          <Route path="/admin_dashboard" element={<AdminDashboard />} />
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />

@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const ProtectedRoute = () => {
-  // const { isAuthenticated } = useSelector(state => state.auth);
+  // const role = useSelector(state => state.user.role);
   
   const isAuthenticated=localStorage.getItem("token")
 

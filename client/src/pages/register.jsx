@@ -59,7 +59,7 @@ const Register = () => {
                                 <label
                                     key={role}
                                     className={`flex items-center justify-center gap-2 p-4 border rounded-xl cursor-pointer transition
-                ${profile === role
+                              ${profile === role
                                             ? "border-pink-300 bg-pink-50 text-pink-300"
                                             : "border-gray-200 hover:border-gray-400"
                                         }`}

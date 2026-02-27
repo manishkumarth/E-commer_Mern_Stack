@@ -8,8 +8,8 @@ require("dotenv").config();
 const registerUser = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
-    if(!username && !email && !password && !role){
-      res.status(400).json({message:"missing field"})
+    if (!username && !email && !password && !role) {
+      res.status(400).json({ message: "missing field" })
     }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -67,7 +67,8 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({
       message: 'Login successful',
-      token
+      token,
+      role: user.role
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
@@ -169,9 +170,9 @@ const deleteUser = async (req, res) => {
     const { userId } = req.params;      // target user
 
     // only admin allowed
-    if (role !== "admin") {
+    if (role !== "admin" && role !== "seller") {
       return res.status(403).json({
-        message: "Only admin can delete users"
+        message: "Only admin or seller can delete users"
       });
     }
 
@@ -209,8 +210,8 @@ const getAllUsers = async (req, res) => {
     const { role } = req.user; // from JWT
 
     // Only admin can get all users
-    if (role !== "admin") {
-      return res.status(403).json({ message: "Only admin can view users" });
+    if (role !== "seller") {
+      return res.status(403).json({ message: "Only seller can view users" });
     }
 
     const users = await User.find().select("-password"); // exclude password
@@ -222,4 +223,4 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getProfile, sendOtp, verifyOtp, forgetPassword, deleteUser,getAllUsers };
+module.exports = { registerUser, loginUser, getProfile, sendOtp, verifyOtp, forgetPassword, deleteUser, getAllUsers };
