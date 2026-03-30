@@ -49,3 +49,8 @@ export const getAllUser=async()=>{
     const res= await api.get("/get-all-users")
     return res
 }
+
+export const getAllOrder=async()=>{
+    const res=await api.get("/get-all-orderby-seller")
+    return res
+}

@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 // const razorpay = require("../utils/razorpay");
-const Razorpay =require('razorpay')
+const Razorpay = require('razorpay')
 
 const crypto = require("crypto");
 const Order = require("../model/order");
-const Product=require('../model/productschema')
+const Product = require('../model/productschema')
 const createRazorpayOrder = async (req, res) => {
   try {
     const { amount } = req.body;
@@ -33,14 +33,13 @@ const createRazorpayOrder = async (req, res) => {
 };
 
 
-
 const verifyAndSaveOrder = async (req, res) => {
   try {
     const {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      items, // [{ productId, quantity }]
+      items,
       shippingAddress,
       contactNumber,
       paymentMethod
@@ -48,7 +47,7 @@ const verifyAndSaveOrder = async (req, res) => {
 
     const userId = req.user.id;
 
-    // 1️⃣ Verify Razorpay signature
+    // Verify Razorpay signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSign = crypto
@@ -60,9 +59,8 @@ const verifyAndSaveOrder = async (req, res) => {
       return res.status(400).json({ message: "Invalid payment signature" });
     }
 
-    // 2️⃣ Prepare order items from DB
+    //  Prepare order items
     const orderItems = [];
-    let sellerId = null;
 
     for (let item of items) {
       const product = await Product.findById(item.productId);
@@ -71,12 +69,13 @@ const verifyAndSaveOrder = async (req, res) => {
         return res.status(404).json({ message: "Product not found" });
       }
 
-      if (!sellerId) {
-        sellerId = product.sellerId; // take from DB
+      //  check seller info exists
+      if (!product.sellerInfo || !product.sellerInfo.sellerId) {
+        return res.status(400).json({ message: "Seller info missing in product" });
       }
 
       orderItems.push({
-        sellerId:sellerId,
+        sellerId: product.sellerInfo.sellerId,
         productId: product._id,
         title: product.title,
         price: product.price,
@@ -85,10 +84,9 @@ const verifyAndSaveOrder = async (req, res) => {
       });
     }
 
-    // 3️⃣ Save order
+    // 3️⃣ Save order (NO top-level sellerId needed)
     const newOrder = await Order.create({
       userId,
-      sellerId,
       orderId: razorpay_order_id,
       paymentMethod,
       items: orderItems,
@@ -97,16 +95,16 @@ const verifyAndSaveOrder = async (req, res) => {
       orderStatus: "pending"
     });
 
+    console.log("Order Saved:", newOrder);
+
     res.status(201).json({
       message: "Payment verified & order placed",
       order: newOrder
     });
 
   } catch (err) {
-    // console.error(err);
-    console.log(err)
+    console.log(" Order Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
-
-module.exports = { createRazorpayOrder ,verifyAndSaveOrder};
+module.exports = { createRazorpayOrder, verifyAndSaveOrder };

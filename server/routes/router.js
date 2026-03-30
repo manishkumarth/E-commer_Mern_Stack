@@ -1,7 +1,7 @@
 const { Router } = require("express");
 
 const { registerUser, loginUser,getProfile ,sendOtp, verifyOtp, forgetPassword,deleteUser,getAllUsers} = require("../controller/user");
-const {addProduct,deleteProduct,getSellerProducts,getAllProducts}=require("../controller/product")
+const {addProduct,deleteProduct,getSellerProducts,getAllProducts,updateProduct, getProductById}=require("../controller/product")
 const {addToCart ,getUserCart,removeFromCart}=require("../controller/usercart")
 const {checkoutOrder,getTrackOrder,changeOrderStatus, getAllOrdersBySeller,getAllOrdersByUser}=require("../controller/order");
 const {addCategory,getAllCategories,getProductByCategory}=require("../controller/category");
@@ -34,9 +34,11 @@ router.get("/track-order",authMiddleware,getTrackOrder);
 router.post("/add-product",authMiddleware,addProduct);
 router.delete("/delete-product/:productId",authMiddleware,deleteProduct);
 router.get("/get-seller-products",authMiddleware,getSellerProducts);
-router.post("/get-all-orderby-seller",authMiddleware,getAllOrdersBySeller);
+router.get("/get-all-orderby-seller",authMiddleware,getAllOrdersBySeller);
 router.post("/order-status-change",authMiddleware,changeOrderStatus);
 router.get("/add-category", authMiddleware, addCategory);
+router.get("/get-single-product",authMiddleware,getProductById)
+router.put("/get-product-update/:productId",authMiddleware,updateProduct)
 
 
 router.get("/get-all-products",getAllProducts);

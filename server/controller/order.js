@@ -1,5 +1,6 @@
 
 const Order = require("../model/order");
+const mongoose = require("mongoose");
 
 const checkoutOrder = async (req, res) => {
     // Implementation for checkout order
@@ -47,48 +48,71 @@ const getAllOrdersBySeller = async (req, res) => {
     try {
         const userRole = req.user.role;
         const userId = req.user.id;
-        if (userRole !== 'admin' || userRole !== 'seller') {
+
+        if (userRole !== 'admin' && userRole !== 'seller') {
             return res.status(403).json({ message: "Unauthorized access" });
         }
-        const orders = await Order.find({ userId: sellerId });
+
+        let orders;
+
+        if (userRole === "admin") {
+            // Admin sees all orders
+            orders = await Order.find();
+        } else {
+            // Seller sees only their orders
+            orders = await Order.find({
+                "items.sellerId": userId
+            });
+        }
+
         res.status(200).json({ orders });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
 };
-const getAllOrdersByUser=async (req,res)=>{
+const getAllOrdersByUser = async (req, res) => {
     console.log(req)
-    try{
-        const userId=req.user.id;
-        const data=await Order.find({userId})
-        console.log("data logs",data)
-        res.status(200).json({message:"order details success",data})
-    }catch(error){
-        console.log("error logs",error)
-        res.status(200).json({message:"server error"})
+    try {
+        const userId = req.user.id;
+        const data = await Order.find({ userId })
+        console.log("data logs", data)
+        res.status(200).json({ message: "order details success", data })
+    } catch (error) {
+        console.log("error logs", error)
+        res.status(200).json({ message: "server error" })
     }
 }
+
 const changeOrderStatus = async (req, res) => {
-    // Implementation for changing order status 
     try {
         const { orderId, orderStatus } = req.body;
         const userId = req.user.id;
-        const userRole = req.user.role;
-        if (userRole !== 'admin' || userRole !== 'seller') {
-            return res.status(403).json({ message: "Unauthorized access" });
-        }
-        const order = await Order.findOne
-            ({ orderId: orderId, sellerId: userId });
+
+        const order = await Order.findOne({ orderId });
+
         if (!order) {
             return res.status(404).json({ message: "Order not found" });
         }
+
+        // check seller exists in items
+        const isSeller = order.items.some(item =>
+            item.sellerId.toString() === userId
+        );
+
+        if (!isSeller) {
+            return res.status(403).json({ message: "Not your order" });
+        }
+
         order.orderStatus = orderStatus;
         await order.save();
-        res.status(200).json({ message: "Order status updated successfully", order });
+
+        res.status(200).json({ message: "Updated", order });
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Server error" });
     }
 };
-module.exports = { checkoutOrder, getTrackOrder, changeOrderStatus, getAllOrdersBySeller,getAllOrdersByUser };
+module.exports = { checkoutOrder, getTrackOrder, changeOrderStatus, getAllOrdersBySeller, getAllOrdersByUser };

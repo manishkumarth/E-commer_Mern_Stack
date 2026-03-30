@@ -35,7 +35,7 @@ const Login = () => {
       if (res.data.role === "user") {
         navigate("/cart");
       } else {
-        navigate("/dashboard"); 
+        navigate("/admin_dashboard"); 
       }
 
     } catch (error) {

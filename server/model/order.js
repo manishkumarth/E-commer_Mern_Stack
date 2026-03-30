@@ -1,26 +1,31 @@
 
-const mongoose=require('mongoose');
-const orderSchema= mongoose.Schema({
+const mongoose = require('mongoose');
+const orderSchema = mongoose.Schema({
     userId: {
         type: String,
         required: true,
     },
     sellerId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     },
-    orderId:{
+    orderId: {
         type: String,
         required: true,
         unique: true,
     },
-    paymentMethod:{
+    paymentMethod: {
         type: String,
     },
     items: [
         {
+            sellerId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            },
             productId: {
-                type: String,
-                required: true,
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Product"
             },
             title: String,
             price: Number,
