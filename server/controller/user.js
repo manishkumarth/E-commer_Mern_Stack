@@ -190,7 +190,8 @@ const deleteUser = async (req, res) => {
       });
     }
 
-    await User.findByIdAndDelete(userId);
+    // uncommet to delete user
+    // await User.findByIdAndDelete(userId);
 
     res.status(200).json({
       message: "User deleted successfully"

@@ -19,7 +19,7 @@ router.post("/verify-otp", verifyOtp);
 router.post("/forget-password", forgetPassword);
 
 // admin only routes
-router.post("/delete-user/:userId",authMiddleware,deleteUser);//admin only 
+router.delete("/delete-user/:userId",authMiddleware,deleteUser);//admin only 
 router.get("/get-all-users",authMiddleware,getAllUsers);   //admin only
 
 // user 
@@ -37,7 +37,7 @@ router.get("/get-seller-products",authMiddleware,getSellerProducts);
 router.get("/get-all-orderby-seller",authMiddleware,getAllOrdersBySeller);
 router.post("/order-status-change",authMiddleware,changeOrderStatus);
 router.get("/add-category", authMiddleware, addCategory);
-router.get("/get-single-product",authMiddleware,getProductById)
+router.get("/get-single-product/:id",authMiddleware,getProductById)
 router.put("/get-product-update/:productId",authMiddleware,updateProduct)
 
 

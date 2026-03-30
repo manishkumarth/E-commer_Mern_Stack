@@ -6,7 +6,7 @@ import { PageRouter } from './routes/routers';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { setCart } from './features/cart';
-import {setUser} from './features/auth_slice'
+import { setUser } from './features/auth_slice'
 import { useEffect } from 'react';
 import { getProfile, getUserCart } from './services/user';
 
@@ -45,16 +45,16 @@ function App() {
 
   return (
     <>
-     <BrowserRouter>
-      <Toaster position="top-right" richColors />
-      <div className="min-h-screen flex flex-col">
-        <Header />
-       <main className="flex-grow pt-16 md:pt-18">
-  <PageRouter />
-</main>
-        <Footer />
-      </div>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Toaster position="top-right" richColors />
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-grow pt-16 md:pt-18 relative z-10">
+            <PageRouter />
+          </main>
+          <Footer />
+        </div>
+      </BrowserRouter>
     </>
   );
 }

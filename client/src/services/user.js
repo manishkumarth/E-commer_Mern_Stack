@@ -54,3 +54,7 @@ export const getAllOrder=async()=>{
     const res=await api.get("/get-all-orderby-seller")
     return res
 }
+export const deleteUser=async(id)=>{
+    const res= await api.delete(`/delete-user/${id}`)
+    return res
+}
