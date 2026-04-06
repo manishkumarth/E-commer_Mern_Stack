@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { getRegister } from '../services/user';
 import toast from 'react-hot-toast';
 const Register = () => {
-    const [profile, setProfile] = useState("")
-    const [input, setInput] = useState({ username: "", email: "", password: "", role: "" })
+    const [profile, setProfile] = useState("user")
+    const [input, setInput] = useState({ username: "", email: "", password: "", role: "user" })
     const navigate = useNavigate()
 
     const handleRegister = async (e) => {
@@ -42,14 +42,14 @@ const Register = () => {
                 <h2 className="text-center text-2xl font-bold text-gray-900">
                     Create your account
                 </h2>
-                <p className="text-center text-sm text-gray-500 mt-1">
+                {/* <p className="text-center text-sm text-gray-500 mt-1">
                     Choose your role and get started
-                </p>
+                </p> */}
 
                 <form className="space-y-6 mt-8">
 
                     {/* Profile Selection */}
-                    <div>
+                    {/* <div>
                         <h3 className="mb-3 text-sm font-semibold text-gray-700">
                             Select your profile
                         </h3>
@@ -79,7 +79,7 @@ const Register = () => {
                                 </label>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
 
                     {/* Username */}
                     <div>
