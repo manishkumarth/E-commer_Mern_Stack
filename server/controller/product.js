@@ -87,7 +87,7 @@ const updateProduct = async (req, res) => {
     const { title, description, price, image, category, stock } = req.body;
 
     const product = await Product.findById(req.params.productId);
-    console.log(product,req)
+    console.log(product, req)
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -139,6 +139,91 @@ const getProductById = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+const getEmbedding = require("../services/Ai")
+const searchByImage = async (req, res) => {
+  try {
+    console.log("FILE:", req.file);
+
+    const embedding = await getEmbedding(
+      req.file ? req.file.path : "TEST_URL"
+    );
+
+    console.log("EMBEDDING:", embedding);
+
+    res.status(200).json({ embedding });
+
+  } catch (error) {
+    console.log(" FULL ERROR:", error);
+    console.log("MESSAGE:", error.message);
+    console.log("RESPONSE:", error.response?.data);
+
+    res.status(500).json({
+      message: "Error in image search",
+      error: error.message,
+      pythonError: error.response?.data
+    });
+  }
+};
+
+const generateEmbeddingSingle = async (req, res) => {
+  console.log("request: ", req)
+  try {
+    const { id } = req.params;
+
+    // admin check (optional but recommended)
+    if (req.user.role !== "admin" && req.user.role !== "seller") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const product = await Product.findById(id);
+    console.log(id)
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // skip if already exists
+    if (product.embedding && product.embedding.length > 0) {
+      return res.status(200).json({
+        message: "Embedding already exists",
+        product
+      });
+    }
+
+    // generate embedding
+    let embedding = await getEmbedding(product.image);
+
+    //  STEP 1: agar string hai → parse karo
+    if (typeof embedding === "string") {
+      embedding = JSON.parse(embedding);
+    }
+
+    //  STEP 2: agar nested array hai → flatten karo
+    if (Array.isArray(embedding) && Array.isArray(embedding[0])) {
+      embedding = embedding[0];
+    }
+
+    //  STEP 3: ensure numbers only
+    embedding = embedding.map(num => Number(num));
+
+    console.log("FINAL EMBEDDING TYPE:", typeof embedding[0]); // should be number
+
+    product.embedding = embedding;
+    await product.save();
+
+    res.status(200).json({
+      message: "Embedding generated successfully",
+      product
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 module.exports = {
-  addProduct, deleteProduct, getAllProducts, getSellerProducts, updateProduct, getProductById
+  addProduct, deleteProduct, getAllProducts, getSellerProducts, updateProduct, getProductById, searchByImage, generateEmbeddingSingle
 };

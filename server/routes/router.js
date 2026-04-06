@@ -1,7 +1,10 @@
 const { Router } = require("express");
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 const { registerUser, loginUser,getProfile ,sendOtp, verifyOtp, forgetPassword,deleteUser,getAllUsers} = require("../controller/user");
-const {addProduct,deleteProduct,getSellerProducts,getAllProducts,updateProduct, getProductById}=require("../controller/product")
+const {addProduct,deleteProduct,getSellerProducts,getAllProducts,updateProduct, getProductById, searchByImage,generateEmbeddingSingle}=require("../controller/product")
 const {addToCart ,getUserCart,removeFromCart}=require("../controller/usercart")
 const {checkoutOrder,getTrackOrder,changeOrderStatus, getAllOrdersBySeller,getAllOrdersByUser}=require("../controller/order");
 const {addCategory,getAllCategories,getProductByCategory}=require("../controller/category");
@@ -47,5 +50,8 @@ router.get("/get-products-by-category/:category", getProductByCategory);
 
 router.post('/create-order',authMiddleware,createRazorpayOrder)
 router.post('/verify-save-order',authMiddleware,verifyAndSaveOrder)
+
+router.post("/ai-search", upload.single("image"),searchByImage)
+router.post("/generate-ai-search/:id",authMiddleware,generateEmbeddingSingle)
 
 module.exports = router;

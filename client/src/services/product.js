@@ -29,3 +29,13 @@ export const deleteProduct=async (id)=>{
 export const changeOrderStatus=async (data)=>{
   const res=await api.post("/order-status-change",data)
 }
+
+export const generateAiSearch=async(id)=>{
+  const res= await api.post(`/generate-ai-search/${id}`)
+  return res
+}
+
+export const searchByAi=async(file)=>{
+  const res= await api.post("/ai-search",file)
+  return res
+}

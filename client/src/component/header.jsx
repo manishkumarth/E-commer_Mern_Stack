@@ -8,6 +8,7 @@ import {
 import { logout } from '../features/auth_slice';
 import { resetCart } from '../features/cart';
 import { searcContext } from '../context/searchcontext';
+import SearchByAi from './searchByAi';
 
 function Header() {
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ function Header() {
               ShopShe
             </NavLink>
 
+          <SearchByAi />
             {/* Desktop Search */}
             <div className="hidden md:block flex-1 max-w-xl mx-8">
               <input

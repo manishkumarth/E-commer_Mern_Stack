@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllProduct, updateProduct, deleteProduct } from "../services/product";
+import { getAllProduct, updateProduct, deleteProduct, generateAiSearch } from "../services/product";
 import toast from "react-hot-toast";
 
 function ProductList() {
@@ -68,6 +68,17 @@ function ProductList() {
     }
   };
 
+  const enableAiSearch = async (id) => {
+    try {
+      const res = await generateAiSearch(id)
+      console.log("response from generate ai : ", res)
+    } catch (error) {
+      alert("error from ai genereate", error)
+    }
+
+
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
       <div className="max-w-7xl mx-auto">
@@ -115,13 +126,12 @@ function ProductList() {
                         ₹{Number(product.price).toLocaleString()}
                       </td>
                       <td
-                        className={`px-6 py-4 font-medium ${
-                          product.stock === 0
-                            ? "text-red-600"
-                            : product.stock <= 5
+                        className={`px-6 py-4 font-medium ${product.stock === 0
+                          ? "text-red-600"
+                          : product.stock <= 5
                             ? "text-orange-600"
                             : "text-gray-900"
-                        }`}
+                          }`}
                       >
                         {product.stock}
                       </td>
@@ -139,7 +149,20 @@ function ProductList() {
                         >
                           Delete
                         </button>
-                      </td>
+                        <button
+                          onClick={() => enableAiSearch(product._id)}
+                          disabled={product?.embedding?.length > 0}
+                          className={`px-4 py-2 rounded-lg text-white font-medium transition-all duration-200
+                            ${product?.embedding?.length > 0
+                              ? "bg-green-500 cursor-not-allowed"
+                              : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
+                            }
+                        `}
+                        >
+                          {product?.embedding?.length > 0
+                            ? "AI Enabled ✅"
+                            : "Enable AI Search"}
+                        </button>                      </td>
                     </tr>
                   ))
                 )}
@@ -257,11 +280,10 @@ function ProductList() {
                   <button
                     onClick={handleUpdate}
                     disabled={loading}
-                    className={`px-6 py-2.5 rounded-lg text-white font-medium transition ${
-                      loading
-                        ? "bg-green-400 cursor-not-allowed"
-                        : "bg-green-600 hover:bg-green-700"
-                    }`}
+                    className={`px-6 py-2.5 rounded-lg text-white font-medium transition ${loading
+                      ? "bg-green-400 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700"
+                      }`}
                   >
                     {loading ? "Updating..." : "Save Changes"}
                   </button>
