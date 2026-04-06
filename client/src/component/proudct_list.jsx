@@ -182,9 +182,7 @@
 
 // export default ProductList; 
 
-
-
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { IoArrowBack } from "react-icons/io5";
@@ -193,13 +191,12 @@ import { getAllProduct } from "../services/product";
 import Product from "./product";
 import { useFilteredProducts } from "../hook/use_filter_product";
 import { searcContext } from "../context/searchcontext";
-import { useState } from "react";
+
 const ProductList = () => {
   const { 
     search, 
     setSearch, 
     searchMode, 
-    setSearchMode, 
     aiSearchResults,
     resetToNormalMode 
   } = useContext(searcContext);
@@ -208,17 +205,18 @@ const ProductList = () => {
   const [sort, setSort] = useState("");
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["product"],
+    queryKey: ["products"],
     queryFn: getAllProduct,
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
   const allProducts = data?.data || data || [];
 
-  // 🔥 Decide which products to show
+  // Products to display
   const productsToShow = searchMode ? aiSearchResults : allProducts;
 
-  // Only apply filters when NOT in AI search mode
+  // Filters only work in normal mode
   const filteredProducts = searchMode 
     ? productsToShow 
     : useFilteredProducts(allProducts, search, category, sort);
@@ -230,7 +228,7 @@ const ProductList = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-12 mt-5">
 
-      {/* 🔹 Top Navbar - Different for AI Search */}
+      {/* Top Navbar */}
       <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b shadow-sm">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
           <button
@@ -239,7 +237,7 @@ const ProductList = () => {
           >
             <IoArrowBack size={22} />
             <span className="hidden sm:inline font-medium">
-              {searchMode ? "Back to All Products" : "Back"}
+              {searchMode ? "← Back to All Products" : "Back"}
             </span>
           </button>
 
@@ -253,25 +251,94 @@ const ProductList = () => {
 
       <div className="max-w-7xl mx-auto px-4 pt-6">
 
-        {/* Show filters ONLY in normal mode */}
+        {/* ==================== FILTER BAR (Normal Mode Only) ==================== */}
         {!searchMode && (
           <div className="bg-white rounded-xl shadow-sm p-5 mb-8 border">
-            {/* Your existing filter bar code */}
             <div className="flex flex-wrap justify-between items-end gap-4">
-              {/* Category & Sort filters here... */}
-              {/* (Keep your existing filter code) */}
+
+              <div className="flex flex-wrap gap-4">
+                {/* Category Filter */}
+                <div className="min-w-[180px]">
+                  <label className="text-sm text-gray-600">Category</label>
+                  <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full mt-1 px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="all">All Categories</option>
+                    <option value="boys">Boys</option>
+                    <option value="girls">Girls</option>
+                    <option value="mens">Men's</option>
+                    <option value="women">Women's</option>
+                  </select>
+                </div>
+
+                {/* Sort Filter */}
+                <div className="min-w-[180px]">
+                  <label className="text-sm text-gray-600">Sort</label>
+                  <select
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    className="w-full mt-1 px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  >
+                    <option value="">Recommended</option>
+                    <option value="low-high">Price: Low → High</option>
+                    <option value="high-low">Price: High → Low</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Clear Filters */}
+              {(category !== "all" || sort !== "" || search) && (
+                <button
+                  onClick={() => {
+                    setCategory("all");
+                    setSort("");
+                    setSearch("");
+                  }}
+                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
+
+            {/* Result Count - Normal Mode */}
+            {!isLoading && (
+              <p className="mt-4 text-sm text-gray-500">
+                Showing {filteredProducts.length} of {allProducts.length} products
+              </p>
+            )}
           </div>
         )}
 
-        {/* Result Count */}
-        {!isLoading && (
-          <p className="mt-3 text-sm text-gray-500 mb-6">
-            {searchMode 
-              ? `Found ${productsToShow.length} similar products` 
-              : `Showing ${filteredProducts.length} of ${allProducts.length} products`
-            }
+        {/* AI Search Result Count */}
+        {searchMode && aiSearchResults.length > 0 && (
+          <p className="mt-3 mb-6 text-sm text-gray-600 font-medium">
+            Found {aiSearchResults.length} similar products from image search
           </p>
+        )}
+
+        {/* Loading */}
+        {isLoading && !searchMode && (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-80 bg-white rounded-xl animate-pulse" />
+            ))}
+          </div>
+        )}
+
+        {/* Error */}
+        {isError && !searchMode && (
+          <div className="text-center py-20">
+            <p className="text-red-500 text-lg">Failed to load products</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg"
+            >
+              Retry
+            </button>
+          </div>
         )}
 
         {/* Product Grid */}
@@ -291,13 +358,24 @@ const ProductList = () => {
             ) : (
               <div className="col-span-full text-center py-20">
                 <p className="text-xl text-gray-600">
-                  {searchMode ? "No similar products found" : "No products found"}
+                  {searchMode ? "No similar products found for this image" : "No products found"}
                 </p>
+                {!searchMode && (
+                  <button
+                    onClick={() => {
+                      setCategory("all");
+                      setSort("");
+                      setSearch("");
+                    }}
+                    className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-lg"
+                  >
+                    Reset Filters
+                  </button>
+                )}
               </div>
             )}
           </div>
         )}
-
       </div>
     </div>
   );

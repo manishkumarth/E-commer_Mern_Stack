@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { searchByAi, getAllProduct } from "../services/product";   // ← import getAllProduct
 import { searcContext } from "../context/searchcontext";
 
-function SearchByAi() {
+function SearchByAi({ onClose }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -66,6 +66,7 @@ function SearchByAi() {
 
       setAiSearchResults(matchedProducts);
       setSearchMode(true);
+      onClose?.();
 
     } catch (err) {
       console.error("AI Search Error:", err);
