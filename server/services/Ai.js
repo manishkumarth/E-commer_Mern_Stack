@@ -7,8 +7,8 @@ const path = require("path");
 let Client;
 
 async function loadGradio() {
-    const gradio = await import('@gradio/client');
-    Client = gradio.Client;
+  const gradio = await import('@gradio/client');
+  Client = gradio.Client;
 }
 loadGradio();
 
@@ -51,7 +51,7 @@ async function getEmbeddingWithLocal(input) {
 
 async function getEmbeddingWidthApi(file) {
   try {
-    
+
 
     const client = await Client.connect("manish12099/embedding_image");
     //  URL case
@@ -70,14 +70,15 @@ async function getEmbeddingWidthApi(file) {
 
     // // FILE case
     else {
-      console.log("PATH RECEIVED:", file.path);
+      console.log("FILE RECEIVED:", file);
 
-      const fullPath = path.resolve(file.path);   // fix windows path
-      const buffer = fs.readFileSync(fullPath);
+      const buffer = file.buffer;
+
       const result = await client.predict("/get_embedding", {
         image_file: buffer,
         image_url: "",
       });
+
       const embedding = result.data[0].embedding;
 
       console.log("EMBEDDING:", embedding);
